@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/artemis/!svn/ver/355/trunk/CL-LiveDebug_v3/Obj
+END
+usbhdfsd.o
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/artemis/!svn/ver/355/trunk/CL-LiveDebug_v3/Obj/usbhdfsd.o
+END
+cdvdinit_irx.o
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/artemis/!svn/ver/355/trunk/CL-LiveDebug_v3/Obj/cdvdinit_irx.o
+END
+usbd.o
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/artemis/!svn/ver/355/trunk/CL-LiveDebug_v3/Obj/usbd.o
+END
