@@ -15,7 +15,6 @@
 #include "libcdvd.h"
 #include "r5900_regs.h"
 #include "Engine.c"
-#include "Engine2.c"
 
 #define _RESIDENT_	__attribute__((section(".resident")))
 #define DEBUG
@@ -333,11 +332,21 @@ char *parseSystemCnf()
 
 int main(void)
 {
-		
+	/*int state = 1;
 	int i, a;
+	int x = 0;*/
 	initalise();
-	scr_printf("	CN-Cheat Shell Menu.\n	Press (X) to swap discs, then (X) again to boot.");
+	StartMenu();
 
+}
+
+int StartMenu(void)
+{
+	int state = 1;
+	int i, a;
+	int x = 0;
+
+	scr_printf("	CN-Cheat Shell Menu.\n	Press (X) to swap discs, then (X) again to boot, Press SELECT for credits, and SQUARE to load cheats");
 	while (1)
 	{
 
@@ -348,13 +357,51 @@ int main(void)
 		//read pad 1
 		buttonStatts(0, 0);
 
-			if(new_pad & PAD_UP)
+			if (new_pad & PAD_SELECT)
 			{
-					scr_printf("Up\n");
+				state = 2;
+				scr_clear();
+				scr_printf("\n\n	CREDITS:\n");
+				scr_printf("\n		Gtlcpimp: Basic Hook Concept (From His Sources), Code Designer (Tool Used For MIPS)");
+				scr_printf("\n		Pyriel: Help On All The Troubleshooting With The Hook");
+				scr_printf("\n		Badger41: Teaching Me MIPS Assembly");
+				scr_printf("\n		cYs Driver: Source code For Cora (Initializing The Pad)\n");
+				scr_printf("\n	END OF CREDITS\n 	Press (X) To Return To Menu\n");
 			}
-			if (new_pad & PAD_DOWN)
+
+			if (state == 2)
 			{
-					scr_printf("Down\n");
+					if (new_pad & PAD_CROSS)
+					{
+						scr_clear();
+						state = 1;
+						StartMenu();
+					}					
+
+			}
+			if (new_pad & PAD_SQUARE)
+			{
+
+			ee_kmode_enter();
+			//00171B40 05F05FF0
+			/**(u32*)0x8007F000 = 0x00007FFF;
+			*(u32*)0x8007F004 = 0x00171B40;
+			*(u32*)0x8007F008 = 0x000022A3;
+			*(u32*)0x8007F00c = 0x00347E40;
+			*(u32*)0x8007F010 = 0x00000000;
+			*(u32*)0x8007F014 = 0x00347D9C;
+			*(u32*)0x8007F018 = 0x3E000000;
+			*(u32*)0x8007F01c = 0x00347BD8;
+			*(u32*)0x8007F020 = 0x00000000;
+			*(u32*)0x8007F024 = 0x00347E8C;*/
+			*(u32*)0x8007F000 = 0x00000000;
+			*(u32*)0x8007F004 = 0x20347D9C;
+			*(u32*)0x8007F008 = 0x00000000;
+			*(u32*)0x8007F00c = 0x00347E8C;
+			*(u32*)0x8007F010 = 0x000022A3;
+			*(u32*)0x8007F014 = 0x00347E40;
+			ee_kmode_exit();
+
 			}
 			if (new_pad & PAD_CROSS)
 			{
@@ -365,7 +412,7 @@ int main(void)
 				pad_wait_button(PAD_CROSS);
 
 			scr_printf("	Loading...\n");
-			u32 EngineStore = 0x80078000;
+			u32 EngineStore = 0x80080000;
 			u32 EngineRead = (void*)Engine;
 			for (i = 0; i < sizeof(Engine); i += 4)
 			{
@@ -377,19 +424,7 @@ int main(void)
 			EngineRead += 4;
 			}
 
-			u32 EngineStore2 = 0x80078910;
-			u32 EngineRead2 = (void*)Engine2;
-			for (i = 0; i < sizeof(Engine2); i += 4)
-			{
-			//scr_printf("A");
-			ee_kmode_enter();
-			*(u32*)EngineStore2 = *(u32*)EngineRead2;
-			ee_kmode_exit();
-			EngineStore2 += 4;
-			EngineRead2 += 4;
-			}
-
-			ee_kmode_enter();
+			/*ee_kmode_enter();
 			//00171B40 05F05FF0
 			*(u32*)0x8007F000 = 0x00007FFF;
 			*(u32*)0x8007F004 = 0x00171B40;
@@ -399,7 +434,7 @@ int main(void)
 			*(u32*)0x8007F014 = 0x00347D9C;
 			*(u32*)0x8007F018 = 0x3E000000;
 			*(u32*)0x8007F01c = 0x00347BD8;
-			ee_kmode_exit();
+			ee_kmode_exit();*/
 
 			//wait for CD to spin up
 			waitCdReady();
@@ -415,8 +450,7 @@ int main(void)
 			}
 
 			scr_printf("\n	Loaded Game!\n");
-			u32 HookValue = (0x00078000 / 4) + 0x0C000000;
-			u32 HookValue2 = (0x00078910 / 4) + 0x0C000000;
+			u32 HookValue = (0x00080000 / 4) + 0x0C000000;
 			padPortClose(0, 0);
 			//scr_printf("	Shut down PAD, shutting down RPC\n	GOODBYE!!!");
 			SifExitRpc();

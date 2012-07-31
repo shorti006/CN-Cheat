@@ -1,4 +1,4 @@
-address $00078000
+address $00080000
 
 _init:
 addiu sp, sp, $FFF0
@@ -91,6 +91,18 @@ addiu sp, sp, $0200
 
 _codes:
 lui v0, $8008 //8007F000
+lw t0, $F000(v0)
+lw t1, $F004(v0)
+sw t0, $0000(t1)
+
+lw t0, $F000(v0)
+lw t1, $F004(v0)
+sw t0, $0000(t1)
+
+lw t0, $F000(v0)
+lw t1, $F004(v0)
+sw t0, $0000(t1)
+
 lw t0, $F000(v0)
 lw t1, $F004(v0)
 sw t0, $0000(t1)
