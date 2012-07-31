@@ -4,7 +4,7 @@
  Copyright ©
 */
 
-u32 Engine[79] = { 
+u32 Engine[88] = { 
 
 	0x27BDFFF0,
 	0x7FBF0000,
@@ -83,6 +83,15 @@ u32 Engine[79] = {
 	0x3C228008,
 	0x8C48F000,
 	0x8C49F004,
+	0xAD280000,
+	0x8C4AF008,
+	0x8C4BF00C,
+	0xAD6A0000,
+	0x8C48F010,
+	0x8C49F014,
+	0xAD280000,
+	0x8C48F018,
+	0x8C49F01C,
 	0xAD280000,
 	0x03E00008,
 

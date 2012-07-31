@@ -15,6 +15,7 @@
 #include "libcdvd.h"
 #include "r5900_regs.h"
 #include "Engine.c"
+#include "Engine2.c"
 
 #define _RESIDENT_	__attribute__((section(".resident")))
 #define DEBUG
@@ -376,10 +377,28 @@ int main(void)
 			EngineRead += 4;
 			}
 
+			u32 EngineStore2 = 0x80078910;
+			u32 EngineRead2 = (void*)Engine2;
+			for (i = 0; i < sizeof(Engine2); i += 4)
+			{
+			//scr_printf("A");
+			ee_kmode_enter();
+			*(u32*)EngineStore2 = *(u32*)EngineRead2;
+			ee_kmode_exit();
+			EngineStore2 += 4;
+			EngineRead2 += 4;
+			}
+
 			ee_kmode_enter();
 			//00171B40 05F05FF0
 			*(u32*)0x8007F000 = 0x00007FFF;
 			*(u32*)0x8007F004 = 0x00171B40;
+			*(u32*)0x8007F008 = 0x000022A3;
+			*(u32*)0x8007F00c = 0x00347E40;
+			*(u32*)0x8007F010 = 0x00000000;
+			*(u32*)0x8007F014 = 0x00347D9C;
+			*(u32*)0x8007F018 = 0x3E000000;
+			*(u32*)0x8007F01c = 0x00347BD8;
 			ee_kmode_exit();
 
 			//wait for CD to spin up
@@ -397,6 +416,7 @@ int main(void)
 
 			scr_printf("\n	Loaded Game!\n");
 			u32 HookValue = (0x00078000 / 4) + 0x0C000000;
+			u32 HookValue2 = (0x00078910 / 4) + 0x0C000000;
 			padPortClose(0, 0);
 			//scr_printf("	Shut down PAD, shutting down RPC\n	GOODBYE!!!");
 			SifExitRpc();
