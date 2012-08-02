@@ -330,23 +330,12 @@ char *parseSystemCnf()
 	return buffer;
 }
 
-int main(void)
-{
-	/*int state = 1;
-	int i, a;
-	int x = 0;*/
-	initalise();
-	StartMenu();
-
-}
-
-int StartMenu(void)
+int StartMenu()
 {
 	int state = 1;
 	int i, a;
-	int x = 0;
 
-	scr_printf("	CN-Cheat Shell Menu.\n	Press (X) to swap discs, then (X) again to boot, Press SELECT for credits, and SQUARE to load cheats");
+	scr_printf("	CN-Cheat Shell Menu.\n	Press (X) to swap discs, then (X) again to boot; Press SELECT for Credits; Press SQUARE to Load Cheats");
 	while (1)
 	{
 
@@ -365,7 +354,7 @@ int StartMenu(void)
 				scr_printf("\n		Gtlcpimp: Basic Hook Concept (From His Sources), Code Designer (Tool Used For MIPS)");
 				scr_printf("\n		Pyriel: Help On All The Troubleshooting With The Hook");
 				scr_printf("\n		Badger41: Teaching Me MIPS Assembly");
-				scr_printf("\n		cYs Driver: Source code For Cora (Initializing The Pad)\n");
+				scr_printf("\n		cYs Driver: Initializing The Pad (Cora loader)\n");
 				scr_printf("\n	END OF CREDITS\n 	Press (X) To Return To Menu\n");
 			}
 
@@ -382,9 +371,9 @@ int StartMenu(void)
 			if (new_pad & PAD_SQUARE)
 			{
 
-			ee_kmode_enter();
+			/*ee_kmode_enter();
 			//00171B40 05F05FF0
-			/**(u32*)0x8007F000 = 0x00007FFF;
+			*(u32*)0x8007F000 = 0x00007FFF;
 			*(u32*)0x8007F004 = 0x00171B40;
 			*(u32*)0x8007F008 = 0x000022A3;
 			*(u32*)0x8007F00c = 0x00347E40;
@@ -393,14 +382,15 @@ int StartMenu(void)
 			*(u32*)0x8007F018 = 0x3E000000;
 			*(u32*)0x8007F01c = 0x00347BD8;
 			*(u32*)0x8007F020 = 0x00000000;
-			*(u32*)0x8007F024 = 0x00347E8C;*/
-			*(u32*)0x8007F000 = 0x00000000;
-			*(u32*)0x8007F004 = 0x20347D9C;
-			*(u32*)0x8007F008 = 0x00000000;
-			*(u32*)0x8007F00c = 0x00347E8C;
-			*(u32*)0x8007F010 = 0x000022A3;
-			*(u32*)0x8007F014 = 0x00347E40;
-			ee_kmode_exit();
+			*(u32*)0x8007F024 = 0x00347E8C;
+			*(u32*)0x80081000 = 0x80081010;
+			*(u32*)0x80081010 = 0x20347D9C;
+			*(u32*)0x80081014 = 0x00000000;
+			*(u32*)0x80081020 = 0x20347E8C;
+			*(u32*)0x80081024 = 0x00000000;
+			ee_kmode_exit();*/
+			
+			//WriteCheats();
 
 			}
 			if (new_pad & PAD_CROSS)
@@ -468,3 +458,14 @@ int StartMenu(void)
    return 0;
 
 }
+
+int main(void)
+{
+	/*int state = 1;
+	int i, a;
+	int x = 0;*/
+	initalise();
+	StartMenu();
+
+}
+
