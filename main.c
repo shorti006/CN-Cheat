@@ -463,7 +463,6 @@ int StartMenu(void)
 			*(u32*)0x8007F01c = 0x00347BD8;
 			ee_kmode_exit();*/
 
-			//wait for CD to spin up
 			waitCdReady();
 			scr_printf("	Loading...\n");
 			//for (a = 0; a < 40000000; a++)

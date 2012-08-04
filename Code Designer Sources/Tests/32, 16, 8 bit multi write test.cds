@@ -1,4 +1,4 @@
-address $000af900
+address $00080000
 
 //j $000af900
 
@@ -14,14 +14,13 @@ sq s5, $0060(sp)
 sq s6, $0070(sp)
 sq s7, $0080(sp)
 
-/*
 _codes:
-lui t0, $000b
+lui t0, $8008
 
-lw t4, $F000(t0)
-lw t1, $0000(t4)
-beq t1, zero, :_exit
-lw t2, $F000(t0)
+lw t4, $1000(t0)
+lw t4, $0000(t4)
+beq t4, zero, :_exit
+lw t2, $1000(t0)
 lw t5, $0000(t2)
 lw t6, $0004(t2)
 
@@ -32,18 +31,11 @@ srl t7, t8, 24
 
 sw t6, $0000(t5)
 
+lw t2, $1000(t0)
 addiu t2, t2, $0010
-sw t2, $F000(t0)
+sw t2, $1000(t0)
 //jal :_procCodes
-nop
-bne t1, zero, :_codes
-*/
-
-_codes:
-lui t0, $000b
-lw t5, $F010(t0)
-lw t6, $F014(t0)
-sw t6, $0000(t5)
+beq zero, zero, :_codes
 
 /*
 _procCodes:
@@ -82,6 +74,9 @@ nop
 */
 
 _exit:
+lui t0, $8008
+addiu t1, t0, $1010
+sw t1, $1000(t0)
 lq ra, $0000(sp)
 lq s0, $0010(sp)
 lq s1, $0020(sp)
@@ -104,3 +99,4 @@ addiu sp, sp, $0100
 200af024 00000000 //rapid fire
 
 */
+

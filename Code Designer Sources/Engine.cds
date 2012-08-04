@@ -100,10 +100,57 @@ nop
 lw t3, $1000(t0)
 lw s0, $0000(t3)
 lw s1, $0004(t3)
-sw s1, $0000(s0)
+
+srl t7, s0, 25
+sll t8, t7, 25
+subu s0, s0, t8
+srl t7, t8, 24
+
+//sw s1, $0000(s0)
+
 addiu t4, t3, $0010
 sw t4, $1000(t0)
-jr ra
+jal :_procCodes
+beq zero, zero, :_code
+nop
+
+_procCodes:
+
+beq t7, zero, :_8
+nop
+
+addiu t8, zero, $0010
+beq t7, t8, :_16
+nop
+
+addiu t8, zero, $0020
+beq t7, t8, :_32
+nop
+
+beq zero, zero, :_code
+nop
+
+
+_8:
+sb s1, $0000(s0)
+
+beq zero, zero, :_code
+nop
+
+
+_16:
+sh s1, $0000(s0)
+
+beq zero, zero, :_code
+nop
+
+
+_32:
+sw s1, $0000(s0)
+
+beq zero, zero, :_code
+nop
+
 
 _exit:
 addiu t9, t0, $1010
