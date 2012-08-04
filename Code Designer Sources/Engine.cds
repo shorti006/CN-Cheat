@@ -43,18 +43,7 @@ sq fp, $01b0(sp)
 sq gp, $01c0(sp)
 sq ra, $01d0(sp)
 
-/*
-//20171B40 05F05FF0
-lui t0, $0017
-addiu t1, zero, $7FFF
-sw t1, $1B40(t0)
-
-//20347e8c 00000000
-lui t2, $0034
-sw zero, $7e8c(t2)
-*/
-
-call _codes
+jal :_codemanage
 
 lq at, $0000(sp)
 lq v0, $0010(sp)
@@ -89,21 +78,47 @@ lq ra, $01d0(sp)
 jr ra
 addiu sp, sp, $0200
 
-_codes:
-lui v0, $8008 //8007F000
-lw t0, $F000(v0)
-lw t1, $F004(v0)
-sw t0, $0000(t1)
+_codemanage:
+addiu sp, sp, $FF00
+sq ra, $0000(sp)
+sq s0, $0010(sp)
+sq s1, $0020(sp)
+sq s2, $0030(sp)
+sq s3, $0040(sp)
+sq s4, $0050(sp)
+sq s5, $0060(sp)
+sq s6, $0070(sp)
+sq s7, $0080(sp)
 
-lw t0, $F000(v0)
-lw t1, $F004(v0)
-sw t0, $0000(t1)
+lui t0, $8008
 
-lw t0, $F000(v0)
-lw t1, $F004(v0)
-sw t0, $0000(t1)
-
-lw t0, $F000(v0)
-lw t1, $F004(v0)
-sw t0, $0000(t1)
+_code:
+lw t1, $1000(t0)
+lw t2, $0000(t1)
+beq t2, zero, :_exit
+nop
+lw t3, $1000(t0)
+lw s0, $0000(t3)
+lw s1, $0004(t3)
+sw s1, $0000(s0)
+addiu t4, t3, $0010
+sw t4, $1000(t0)
 jr ra
+
+_exit:
+addiu t9, t0, $1010
+sw t9, $1000(t0)
+
+lq ra, $0000(sp)
+lq s0, $0010(sp)
+lq s1, $0020(sp)
+lq s2, $0030(sp)
+lq s3, $0040(sp)
+lq s4, $0050(sp)
+lq s5, $0060(sp)
+lq s6, $0070(sp)
+lq s7, $0080(sp)
+jr ra
+addiu sp, sp, $0100
+
+

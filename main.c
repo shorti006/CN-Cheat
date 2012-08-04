@@ -19,11 +19,17 @@
 #define _RESIDENT_	__attribute__((section(".resident")))
 #define DEBUG
 char *bootFileName;
-#define ERROR_HAX0R				-4
-#define ERROR_CDVDFSV_INIT		-5
 #define ERROR_SYSTEMCNF_PARSE	-6
 #define ERROR_SYSTEMCNF_FILEIO	-7
 #define ERROR_SYSTEMCNF_MEMORY	-8
+
+/*
+	
+	Keep in mind the pad initialization and execution of the
+	game was directly taken from cYs Driver's Cora Loader.
+	Therefore, credit is his for making that part easier.
+	
+*/
 
 int ExecGame(void);
 u32 LoadELF(char *elf);
@@ -330,13 +336,25 @@ char *parseSystemCnf()
 	return buffer;
 }
 
-int main(void)
+int WriteCheats()
 {
-	/*int state = 1;
-	int i, a;
-	int x = 0;*/
-	initalise();
-	StartMenu();
+
+	int fd, i;
+	//short result[10];
+
+	fd = fioOpen("mc0:/cheat.txt", O_RDONLY);
+	if (fd < 0) { fioClose(fd); printf("fd < 0\n"); return 0; }
+	printf("fd > 0\n");
+
+	i = fioLseek(fd, 0, SEEK_END);
+	fioLseek(fd, 0, SEEK_SET);
+
+	printf("fioLseek SEEK_??? Done\n");
+
+	
+
+	fioClose(fd);
+
 
 }
 
@@ -344,7 +362,7 @@ int StartMenu(void)
 {
 	int state = 1;
 	int i, a;
-	int x = 0;
+	//int x = 0;
 
 	scr_printf("	CN-Cheat Shell Menu.\n	Press (X) to swap discs, then (X) again to boot, Press SELECT for credits, and SQUARE to load cheats");
 	while (1)
@@ -392,15 +410,21 @@ int StartMenu(void)
 			*(u32*)0x8007F014 = 0x00347D9C;
 			*(u32*)0x8007F018 = 0x3E000000;
 			*(u32*)0x8007F01c = 0x00347BD8;
+
 			*(u32*)0x8007F020 = 0x00000000;
 			*(u32*)0x8007F024 = 0x00347E8C;*/
-			*(u32*)0x8007F000 = 0x00000000;
-			*(u32*)0x8007F004 = 0x20347D9C;
-			*(u32*)0x8007F008 = 0x00000000;
-			*(u32*)0x8007F00c = 0x00347E8C;
-			*(u32*)0x8007F010 = 0x000022A3;
-			*(u32*)0x8007F014 = 0x00347E40;
+			*(u32*)0x80081000 = 0x80081010;
+			*(u32*)0x80081010 = 0x20347D9C;
+			*(u32*)0x80081014 = 0x00000000;
+			*(u32*)0x80081020 = 0x20347E8C;
+			*(u32*)0x80081024 = 0x00000000;
+			*(u32*)0x80081030 = 0x20347E40;
+			*(u32*)0x80081034 = 0x000022A3;
 			ee_kmode_exit();
+
+			//WriteCheats();
+	
+			scr_printf("\n	Cheats activated\n");
 
 			}
 			if (new_pad & PAD_CROSS)
@@ -411,9 +435,10 @@ int StartMenu(void)
 
 				pad_wait_button(PAD_CROSS);
 
-			scr_printf("	Loading...\n");
+			scr_printf("	Installing Engine...\n");
 			u32 EngineStore = 0x80080000;
 			u32 EngineRead = (void*)Engine;
+
 			for (i = 0; i < sizeof(Engine); i += 4)
 			{
 			//scr_printf("A");
@@ -425,6 +450,7 @@ int StartMenu(void)
 			}
 
 			/*ee_kmode_enter();
+
 			//00171B40 05F05FF0
 			*(u32*)0x8007F000 = 0x00007FFF;
 			*(u32*)0x8007F004 = 0x00171B40;
@@ -433,13 +459,14 @@ int StartMenu(void)
 			*(u32*)0x8007F010 = 0x00000000;
 			*(u32*)0x8007F014 = 0x00347D9C;
 			*(u32*)0x8007F018 = 0x3E000000;
+
 			*(u32*)0x8007F01c = 0x00347BD8;
 			ee_kmode_exit();*/
 
 			//wait for CD to spin up
 			waitCdReady();
-
-			for (a = 0; a < 40000000; a++)
+			scr_printf("	Loading...\n");
+			//for (a = 0; a < 40000000; a++)
 			{
 			}
 
@@ -468,3 +495,14 @@ int StartMenu(void)
    return 0;
 
 }
+
+int main(void)
+{
+	/*int state = 1;
+	int i, a;
+	int x = 0;*/
+	initalise();
+	StartMenu();
+
+}
+
