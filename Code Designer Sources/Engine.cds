@@ -106,10 +106,6 @@ sll t8, t7, 25
 subu s0, s0, t8
 srl t7, t8, 24
 
-//sw s1, $0000(s0)
-
-addiu t4, t3, $0010
-sw t4, $1000(t0)
 jal :_procCodes
 beq zero, zero, :_code
 nop
@@ -127,12 +123,23 @@ addiu t8, zero, $0020
 beq t7, t8, :_32
 nop
 
+addiu t8, zero, $00D0
+beq t7, t8, :_D
+nop
+
+beq zero, zero, :_ERROR
+nop
+
+_ERROR:
+addiu t4, t3, $0010
+sw t4, $1000(t0)
 beq zero, zero, :_code
 nop
 
-
 _8:
 sb s1, $0000(s0)
+addiu t4, t3, $0010
+sw t4, $1000(t0)
 
 beq zero, zero, :_code
 nop
@@ -140,6 +147,8 @@ nop
 
 _16:
 sh s1, $0000(s0)
+addiu t4, t3, $0010
+sw t4, $1000(t0)
 
 beq zero, zero, :_code
 nop
@@ -147,10 +156,32 @@ nop
 
 _32:
 sw s1, $0000(s0)
+addiu t4, t3, $0010
+sw t4, $1000(t0)
 
 beq zero, zero, :_code
 nop
 
+_D:
+lh s2, $0000(s0)
+lui s7, $FFFF
+addu s1, s7, s1
+bne s2, s1, :_DExit
+lw s4, $0010(t3)
+lw s5, $0014(t3)
+
+srl t7, s4, 25
+sll t8, t7, 25
+subu s4, s4, t8
+
+sw s5, $0000(s4)
+
+_DExit:
+addiu t4, t3, $0020
+sw t4, $1000(t0)
+
+beq zero, zero, :_code
+nop
 
 _exit:
 addiu t9, t0, $1010

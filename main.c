@@ -18,7 +18,9 @@
 
 #define _RESIDENT_	__attribute__((section(".resident")))
 #define DEBUG
+
 char *bootFileName;
+
 #define ERROR_SYSTEMCNF_PARSE	-6
 #define ERROR_SYSTEMCNF_FILEIO	-7
 #define ERROR_SYSTEMCNF_MEMORY	-8
@@ -414,8 +416,8 @@ int StartMenu(void)
 			*(u32*)0x8007F020 = 0x00000000;
 			*(u32*)0x8007F024 = 0x00347E8C;*/
 			*(u32*)0x80081000 = 0x80081010;
-			*(u32*)0x80081010 = 0x20347D9C;
-			*(u32*)0x80081014 = 0x00000000;
+			*(u32*)0x80081010 = 0xD01EE682; //AIRWALK 0x20347D9C 0x00000000
+			*(u32*)0x80081014 = 0x0000F3FF;
 			*(u32*)0x80081020 = 0x20347E8C;
 			*(u32*)0x80081024 = 0x00000000;
 			*(u32*)0x80081030 = 0x20347E40;
