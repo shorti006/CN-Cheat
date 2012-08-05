@@ -5,8 +5,8 @@ Status: Unfinished
 
 My cheat engine;
 
-Main Completed: Hook, shell menu, writing 32-bit codes
-Main Unfinished: Inputing codes, 8, 16, and Joker writes
+Main Completed: Hook, shell menu, writing 32, 16, 8 bit codes, multiple codes, D type jokers
+Main Unfinished: Inputing codes from .txt file, and E type jokers
 
 Currently a working progress. Main reason to create my own is to add features that I have always wanted.
 That other cheat device makers didn't want to implement or didn't want at all.
