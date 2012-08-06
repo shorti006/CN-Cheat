@@ -14,9 +14,12 @@ Also, most homebrew cheat devices are left unfinished. So I plan to complete a b
 features first, before I stop.
 Hopefully this will help me be more familiar with C and MIPS Assembly.
 
-School will be starting soon, which will be a huge drawback in my time being spent on this device.
+CREDITS:
 
-7/22/2012
+cYs Driver: I used his Cora Loader to help initialize the pad and to execute the game.
+Gtlcpimp: I used his kernel hook and Code Designer.
+Pyriel: Helped me out on the problems with the hook and location that the engine is installed.
+Badger41: Taught me MIPS Assembly.
 
 - Dnawrkshp,                                                                              
 Also know as: Critical nova
