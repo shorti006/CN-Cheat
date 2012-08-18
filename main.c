@@ -28,28 +28,14 @@ char *bootFileName;
 /*
 	
 	Keep in mind the pad initialization and execution of the
-	game was directly taken from cYs Driver's Cora Loader.
-	Therefore, credit is his for making that part easier.
+	game was directly taken from cYs Driver's Cora Dumper.
+	Therefore, credit is his for making that both of those
+	very critical features.
 	
 */
 
-int ExecGame(void);
-u32 LoadELF(char *elf);
-void ReadCNF(char *elfnm);
-
-extern void cdvdinit_irx;
-extern void mod_usbd;
-extern void mod_usb_mass;
-extern void cdvdinit_irx;
-
-extern u32 size_mod_usbd;
-extern u32 size_mod_usb_mass;
-extern u32 size_cdvdinit_irx;
-
 int LoadModule(void);
-
-//#include "qwerty.c"
-//#include "pad.c"
+void ExecGame(void);
 
 //PAD VARIABLES
 	//check for multiple definitions
@@ -218,10 +204,7 @@ static int initializePad(int port, int slot)
 void initalise(void)
 {
 	int ret;
-
-	SifInitRpc(0);
-	// init debug screen
-	init_scr();
+	
 	// load all modules
 	loadModules();
 	// init pad
@@ -338,38 +321,87 @@ char *parseSystemCnf()
 	return buffer;
 }
 
+int BinRead(char *filename)
+{
+	int State = 0;
+	u32 Addr = 0x80081010;
+	u32 Addr2 = 0x80081014;
+	char result[5];
+	FILE *fd;
+	fd = fopen(filename, "r");
+
+	while ( fread(result, sizeof fd, 1, fd) == 1) {
+	//scr_printf("	%s\n", result);
+
+	if (State == 0) //Alternates between writing the address and writing the value
+	{
+	ee_kmode_enter();
+	*(u32*)Addr = *(u32*)result;
+	ee_kmode_exit();
+
+	State = 1;
+
+	Addr = Addr + 0x00000010;
+	}
+	else if (State == 1)
+	{
+	ee_kmode_enter();
+	*(u32*)Addr2 = *(u32*)result;
+	ee_kmode_exit();
+
+	State = 0;
+
+	Addr2 = Addr2 + 0x00000010;
+	}
+
+	}
+
+	fclose(fd);
+	return 0;
+}
+
 int WriteCheats()
 {
 
-	int fd, i;
-	//short result[10];
+	int a = 0;
+	FILE *fp;
+	fp = fopen("mc0:/cheat.bin", "r");
 
-	fd = fioOpen("mc0:/cheat.txt", O_RDONLY);
-	if (fd < 0) { fioClose(fd); printf("fd < 0\n"); return 0; }
-	printf("fd > 0\n");
+	if (fp < 0)
+	{
+		printf("Could not open cheat.txt");
+		scr_printf("Could not open mc0:/cheat.bin");
+		return 0;
+		fclose(fp);
+	}
 
-	i = fioLseek(fd, 0, SEEK_END);
-	fioLseek(fd, 0, SEEK_SET);
-
-	printf("fioLseek SEEK_??? Done\n");
-
+	if (fp > 0)
+	{
 	
+	a = BinRead("mc0:/cheat.bin");
+	
+	if ( a < 0 )
+	{
+		scr_printf("	Did not successfully write cheats!\n");
+	}
+	scr_printf("\n	Cheats activated\n");
+	}
 
-	fioClose(fd);
-
+	fclose(fp);
+	return 0;
 
 }
 
 int StartMenu(void)
 {
 	int state = 1;
-	int i, a;
 	//int x = 0;
 
-	scr_printf("	CN-Cheat Shell Menu.\n	Press (X) to swap discs, then (X) again to boot, Press SELECT for credits, and SQUARE to load cheats");
+	scr_printf("	CN-Cheat Shell Menu.\n	Press (X) to boot, Press SELECT for credits,	SQUARE to load cheats, Press UP to go into server mode\n");
 	while (1)
 	{
 
+	
    if (padRead(0, 0, &buttons));
 		{
 
@@ -385,7 +417,7 @@ int StartMenu(void)
 				scr_printf("\n		Gtlcpimp: Basic Hook Concept (From His Sources), Code Designer (Tool Used For MIPS)");
 				scr_printf("\n		Pyriel: Help On All The Troubleshooting With The Hook");
 				scr_printf("\n		Badger41: Teaching Me MIPS Assembly");
-				scr_printf("\n		cYs Driver: Source code For Cora (Initializing The Pad)\n");
+				scr_printf("\n		cYs Driver: Source code For Cora Dumper (Initializing The Pad)\n");
 				scr_printf("\n	END OF CREDITS\n 	Press (X) To Return To Menu\n");
 			}
 
@@ -399,43 +431,31 @@ int StartMenu(void)
 					}					
 
 			}
+
 			if (new_pad & PAD_SQUARE)
 			{
 
-			ee_kmode_enter();
-			//00171B40 05F05FF0
-			/**(u32*)0x8007F000 = 0x00007FFF;
-			*(u32*)0x8007F004 = 0x00171B40;
-			*(u32*)0x8007F008 = 0x000022A3;
-			*(u32*)0x8007F00c = 0x00347E40;
-			*(u32*)0x8007F010 = 0x00000000;
-			*(u32*)0x8007F014 = 0x00347D9C;
-			*(u32*)0x8007F018 = 0x3E000000;
-			*(u32*)0x8007F01c = 0x00347BD8;
-
-			*(u32*)0x8007F020 = 0x00000000;
-			*(u32*)0x8007F024 = 0x00347E8C;*/
-			*(u32*)0x80081000 = 0x80081010;
-			*(u32*)0x80081010 = 0xD01EE682; //AIRWALK 0x20347D9C 0x00000000
-			*(u32*)0x80081014 = 0x0000F3FF;
-			*(u32*)0x80081020 = 0x20347E8C;
-			*(u32*)0x80081024 = 0x00000000;
-			*(u32*)0x80081030 = 0x20347E40;
-			*(u32*)0x80081034 = 0x000022A3;
-			ee_kmode_exit();
-
-			//WriteCheats();
-	
-			scr_printf("\n	Cheats activated\n");
+			WriteCheats();
 
 			}
 			if (new_pad & PAD_CROSS)
 			{
-				cdStop();
-				scr_printf("\n	You can swap discs now, Press (X) to boot.\n");
-				cdTrayReq(0, 0x00490000);
+			
+			ExecGame();
+			
+			}
+			
+		}
+	}
 
-				pad_wait_button(PAD_CROSS);
+   return 0;
+
+}
+
+void ExecGame(void)
+{
+
+			int i;
 
 			scr_printf("	Installing Engine...\n");
 			u32 EngineStore = 0x80080000;
@@ -451,19 +471,9 @@ int StartMenu(void)
 			EngineRead += 4;
 			}
 
-			/*ee_kmode_enter();
-
-			//00171B40 05F05FF0
-			*(u32*)0x8007F000 = 0x00007FFF;
-			*(u32*)0x8007F004 = 0x00171B40;
-			*(u32*)0x8007F008 = 0x000022A3;
-			*(u32*)0x8007F00c = 0x00347E40;
-			*(u32*)0x8007F010 = 0x00000000;
-			*(u32*)0x8007F014 = 0x00347D9C;
-			*(u32*)0x8007F018 = 0x3E000000;
-
-			*(u32*)0x8007F01c = 0x00347BD8;
-			ee_kmode_exit();*/
+			ee_kmode_enter();
+			*(u32*)0x80081000 = 0x80081010; //Writes the initial storage of the codes
+			ee_kmode_exit();
 
 			waitCdReady();
 			scr_printf("	Loading...\n");
@@ -488,22 +498,23 @@ int StartMenu(void)
 			LoadExecPS2((const char *)bootFileName, 0, NULL);
 
 			SleepThread();
-			return 0;
-			}
-		}
-	}
-
-   return 0;
 
 }
 
 int main(void)
 {
-	/*int state = 1;
-	int i, a;
-	int x = 0;*/
+	SifInitRpc(0);
+	init_scr();
+	
+	//LoadIRX();
 	initalise();
+	if (remove("mc0:/cheat.bin") < 0)
+	{
+		scr_printf("	Could not delete mc0:/cheat.bin");
+	}
+	scr_printf("	CN-CHEAT!\n");
 	StartMenu();
 
+	return 0;
 }
 
